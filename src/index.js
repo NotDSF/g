@@ -11,7 +11,24 @@ const fastify = require("fastify")({
 fastify.addContentTypeParser("application/vnd.api+json", (request, payload, done) => done())
 
 fastify.post("/*", (request, reply) => {
-    reply.status(502);
+    console.log(`- received ${request.url}`);
+    reply.send({
+        meta: {
+            valid: true
+        }
+    })
+});
+
+let message;
+let hash;
+fastify.get("/message", (request, reply) => {
+    reply.send({ message, hash });
+});
+
+fastify.post("/message", (request, reply) => {
+    message = request.body.message;
+    hash = crypto.randomUUID();
+    reply.send(message);
 });
 
 (async () => {
